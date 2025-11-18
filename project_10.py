@@ -114,6 +114,8 @@ class BudgetBuddyApp(ctk.CTk):
         self.btn_load_expenses.pack(side="left", padx=8)
         self.btn_save_expenses = ctk.CTkButton(frame_buttons, text="💾  Save Expenses", command=self.save_expenses_to_file, state="disabled", font=ctk.CTkFont(size=12), height=40)
         self.btn_save_expenses.pack(side="left", padx=8)
+        self.btn_reset_expenses = ctk.CTkButton(frame_buttons, text="🔄  Reset Expenses", command=self.reset_expenses_file, state="disabled", font=ctk.CTkFont(size=12), height=40)
+        self.btn_reset_expenses.pack(side="left", padx=8)
 
         # Main Frame
         content_frame = ctk.CTkFrame(main_container)
@@ -123,7 +125,7 @@ class BudgetBuddyApp(ctk.CTk):
         left_frame = ctk.CTkFrame(content_frame)
         left_frame.pack(side="left", fill="both", expand=True, padx=(0, 15))
 
-        ctk.CTkLabel(left_frame, text="📊 Expense Summary", font=ctk.CTkFont(size=16, weight="bold")).pack(anchor="w", pady=(0, 10))
+        ctk.CTkLabel(left_frame, text="📊  Expense Summary", font=ctk.CTkFont(size=16, weight="bold")).pack(anchor="w", pady=(0, 10))
         
         summary_box = ctk.CTkFrame(left_frame, corner_radius=10)
         summary_box.pack(fill="both", expand=True)
@@ -153,9 +155,28 @@ class BudgetBuddyApp(ctk.CTk):
             self.btn_add_expenses.configure(state="normal")
             self.btn_load_expenses.configure(state="normal")
             self.btn_save_expenses.configure(state="normal")
+            self.btn_reset_expenses.configure(state="normal")
             self.show_totals()
         except ValueError:
             messagebox.showerror("Error", "Please enter a valid number for income.")
+
+    def reset_expenses_file(self):
+        try:
+            # Clear the file
+            with open("expenses.txt", "w") as f:
+                pass
+            
+            self.budgets = {}
+
+            self.text_output.delete("0.0", "end")
+            self.text_output.insert("0.0", "All expenses have been reset.\n")
+
+            for widget in self.chart_frame.winfo_children():
+                widget.destroy()
+
+            messagebox.showinfo("Reset Complete", "All expenses have been reset and expenses.txt has been cleared.")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to reset expenses: {str(e)}")
 
     def add_expenses(self):
         for category in ["Grocery", "Car"]:
@@ -205,7 +226,6 @@ class BudgetBuddyApp(ctk.CTk):
                 if not name:
                     continue
 
-                # Enter expense price box
                 cost_dialog = CustomInputDialog(self, "Expense Amount", f"Enter amount for {name}:", "float")
                 cost = cost_dialog.get_result()
                 if cost is None:
@@ -258,6 +278,7 @@ class BudgetBuddyApp(ctk.CTk):
             messagebox.showinfo("Success", "Expenses loaded from expenses.txt!")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load expenses: {str(e)}")
+    
 
     def show_totals(self):
         self.text_output.delete("0.0", "end")
@@ -312,6 +333,9 @@ class BudgetBuddyApp(ctk.CTk):
         canvas = FigureCanvasTkAgg(fig, master=self.chart_frame)
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
+    
+
+    
         
 if __name__ == "__main__":
     print("Launching GUI...")
