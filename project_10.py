@@ -205,7 +205,7 @@ class BudgetBuddyApp(ctk.CTk):
                 if not name:
                     continue
 
-                Enter expense price box
+                # Enter expense price box
                 cost_dialog = CustomInputDialog(self, "Expense Amount", f"Enter amount for {name}:", "float")
                 cost = cost_dialog.get_result()
                 if cost is None:
