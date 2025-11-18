@@ -3,7 +3,8 @@
 Creators: 
     Louis Erickson
     Zain Naik
-    Nithilan Srithara
+    Nithilan Sridharan
+
 
 # Budget Buddy
 
